@@ -3,14 +3,14 @@
 
 module RISP
   @@library = {
-    first: -> x { x[0] },
-    rest: -> x { x[1..-1] },
-    print: -> x {
+    'first' => -> x { x[0] },
+    'rest' => -> x { x[1..-1] },
+    'print' => -> x {
       puts x.inspect
       x
     },
-    add: -> a, b { a + b },
-    '+'.to_sym => -> a, b { a + b }
+    '+' => -> a, b { a + b },
+    '*' => -> a, b { a * b }
   }
 
   class Context
@@ -29,7 +29,7 @@ module RISP
   end
 
   @@special = {
-    lambda: -> input, context {
+    'lambda' => -> input, context {
       -> *lambdaArguments {
         scope = input[1].each_with_index.reduce({}) { |acc, (x, i)|
           acc[x[:value]] = lambdaArguments[i]
@@ -46,18 +46,19 @@ module RISP
     elsif input.kind_of? Array
       interpretList input, context
     elsif input[:type] == :identifier
-      context.get input[:value].to_sym
+      context.get input[:value]
     else
       input[:value]
     end
   end
 
   def self.interpretList input, context
-    if !(input[0].kind_of? Array) && @@special[input[0][:value].to_sym]
-      @@special[input[0][:value].to_sym].call input, context
+    if !(input[0].kind_of? Array) && @@special[input[0][:value]]
+      @@special[input[0][:value]].call input, context
     else
       list = input.map { |x| interpret x, context }
       if list[0].kind_of? Proc
+
         list[0].call *(list[1..-1])
       else
         list

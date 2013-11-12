@@ -15,8 +15,7 @@ describe RISP do
   end
 
   it "interpret" do
-    tokens = %w{ ( ( lambda ( x ) ( + x x ) ) 3 ) }
-    tokens = %w{ ( + 1 3 ) }
+    tokens = parser.send :tokenize, "((lambda(x) (* x x)) 3)"
     t = RISP::interpret parser.send(:parenthesize, tokens), nil
     p t
   end
