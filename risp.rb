@@ -1,7 +1,78 @@
+# little-lisp-interpreter using ruby
+# http://maryrosecook.com/post/little-lisp-interpreter
+
 module RISP
+  @@library = {
+    first: -> x { x[0] },
+    rest: -> x { x[1..-1] },
+    print: -> x {
+      puts x.inspect
+      x
+    },
+    add: -> a, b { a + b },
+    '+'.to_sym => -> a, b { a + b }
+  }
+
+  class Context
+    def initialize scope, parent
+      @scope = scope
+      @parent = parent
+    end
+
+    def get identifier
+      if @scope[identifier]
+        @scope[identifier]
+      elsif @parent
+        return @parent.get identifier
+      end
+    end
+  end
+
+  @@special = {
+    lambda: -> input, context {
+      -> *lambdaArguments {
+        scope = input[1].each_with_index.reduce({}) { |acc, (x, i)|
+          acc[x[:value]] = lambdaArguments[i]
+          acc
+        }
+        interpret input[2], Context.new(scope, context)
+      }
+    }
+  }
+
+  def self.interpret input, context
+    if context.nil?
+      interpret input, Context.new(@@library, nil)
+    elsif input.kind_of? Array
+      interpretList input, context
+    elsif input[:type] == :identifier
+      context.get input[:value].to_sym
+    else
+      input[:value]
+    end
+  end
+
+  def self.interpretList input, context
+    if !(input[0].kind_of? Array) && @@special[input[0][:value].to_sym]
+      @@special[input[0][:value].to_sym].call input, context
+    else
+      list = input.map { |x| interpret x, context }
+      if list[0].kind_of? Proc
+        list[0].call *(list[1..-1])
+      else
+        list
+      end
+    end
+  end
+
   class Parser
+    def parse input
+      parenthesize tokenize(input)
+    end
+
+    private
     def tokenize input
-      input.gsub(/([\(\)])/, ' \1 ').strip.split(/\s+/);
+      input.gsub(/([\(\)])/, ' \1 ').strip.split(/\s+/)
     end
 
     def categorize input
