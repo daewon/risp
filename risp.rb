@@ -95,18 +95,20 @@ module RISP
 
     def parenthesize list
       tokens = list.dup # mutable list
-      paren = -> acc {
+
+      _parenthesize = -> acc {
         return acc.pop if tokens.empty?
         token = tokens.shift
 
         case token
-        when '(' then acc << (paren.call [])
+        when '(' then acc << (_parenthesize.call [])
         when ')' then return acc # explicit return
-        else acc << categorize(token) end
-
-        paren.call acc
+        else acc << categorize(token)
+        end
+        _parenthesize.call acc
       }
-      paren.call []
+
+      _parenthesize.call []
     end
   end
 end
