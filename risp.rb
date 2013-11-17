@@ -56,11 +56,12 @@ module RISP
     end
 
     def interpretList input, context
-      if !(input[0].kind_of? Array) and @special[input[0][:value]]
-        @special[input[0][:value]].call input, context
+      head = input.first
+      if !(head.kind_of? Array) and @special[head[:value]]
+        @special[head[:value]].call input, context
       else
         list = input.map { |x| interpret x, context }
-        return list[0].call( *list[1..-1] ) if list[0].kind_of? Proc
+        return list.first.call( *list[1..-1] ) if list.first.kind_of? Proc
         list
       end
     end
