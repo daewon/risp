@@ -15,33 +15,34 @@ describe RISP do
   end
 
   it "interpret" do
-    tokens = parser.send :tokenize, "((lambda(x) (* x x)) 3)"
-    t = RISP::interpret parser.send(:parenthesize, tokens), nil
-    p t
-  end
+    str = '((lambda (x) x) "Lisp")'
+    tokens = parser.send :tokenize, str
+    parens = parser.send :parenthesize, tokens
+    RISP::interpret(parens, nil).should eql "Lisp"
 
-  it 'should return correct result when invoke lambda w no params' do
-    ast = parser.send(:parse, "((lambda (x) (first (x))) 1)")
-    # ast = parser.send(:parse, "((lambda () (rest (1 2))))")
-    # t = RISP::interpret ast, nil
+    str = '((first (list (lambda (x) x) "Lisp")) "daewon")'
+    tokens = parser.send :tokenize, str
+    parens = parser.send :parenthesize, tokens
+    RISP::interpret(parens, nil).should eql "daewon"
+
+
   end
 end
 
+# it('should return correct result for lambda that takes and returns arg', function() {
+#       expect(t.interpret(t.parse("((lambda (x) x) 1)"))).toEqual(1);
+#   });
 
-  # it('should return correct result for lambda that takes and returns arg', function() {
-  #       expect(t.interpret(t.parse("((lambda (x) x) 1)"))).toEqual(1);
-  #   });
+# it('should return correct result for lambda that returns list of vars', function() {
+#       expect(t.interpret(t.parse("((lambda (x y) (x y)) 1 2)"))).toEqual([1, 2]);
+#   });
 
-  # it('should return correct result for lambda that returns list of vars', function() {
-  #       expect(t.interpret(t.parse("((lambda (x y) (x y)) 1 2)"))).toEqual([1, 2]);
-  #   });
+# it('should get correct result for lambda that returns list of lits + vars', function() {
+#       expect(t.interpret(t.parse("((lambda (x y) (0 x y)) 1 2)"))).toEqual([0, 1, 2]);
+#   });
 
-  # it('should get correct result for lambda that returns list of lits + vars', function() {
-  #       expect(t.interpret(t.parse("((lambda (x y) (0 x y)) 1 2)"))).toEqual([0, 1, 2]);
-  #   });
-
-  # it('should return correct result when invoke lambda w params', function() {
-  #       expect(t.interpret(t.parse("((lambda (x) (first (x))) 1)")))
-  #       .toEqual(1);
-  #   });
-  #                    });
+# it('should return correct result when invoke lambda w params', function() {
+#       expect(t.interpret(t.parse("((lambda (x) (first (x))) 1)")))
+#       .toEqual(1);
+#   });
+#                    });

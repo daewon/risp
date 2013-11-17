@@ -1,5 +1,6 @@
-# little-lisp-interpreter using ruby
+# [1;[1;3B3Blittle]]-lisp-interpreter using ruby
 # http://maryrosecook.com/post/little-lisp-interpreter
+require 'ostruct'
 
 module RISP
   @@library = {
@@ -10,7 +11,8 @@ module RISP
       x
     },
     '+' => -> a, b { a + b },
-    '*' => -> a, b { a * b }
+    '*' => -> a, b { a * b },
+    'list' => -> *args { args },
   }
 
   class Context
@@ -53,13 +55,12 @@ module RISP
   end
 
   def self.interpretList input, context
-    if !(input[0].kind_of? Array) && @@special[input[0][:value]]
+    if !(input[0].kind_of? Array) and @@special[input[0][:value]]
       @@special[input[0][:value]].call input, context
     else
       list = input.map { |x| interpret x, context }
       if list[0].kind_of? Proc
-
-        list[0].call *(list[1..-1])
+        list[0].call *list[1..-1]
       else
         list
       end
