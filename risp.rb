@@ -1,19 +1,17 @@
 # lisp-interpreter using ruby
 # ref: http://maryrosecook.com/post/little-lisp-interpreter
-require 'ostruct'
-
 module RISP
   class Interpreter
     class Context
-      def initialize scope, parent
+      def initialize scope, parent = nil
         @scope, @parent = scope, parent
       end
 
       def get identifier
         if @scope[identifier]
           @scope[identifier]
-        elsif @parent
-          return @parent.get identifier
+        else
+          @parent and @parent.get identifier
         end
       end
     end
@@ -47,7 +45,7 @@ module RISP
 
     def interpret input, context = nil
       if context.nil?
-        interpret input, Context.new(@library, nil)
+        interpret input, (Context.new @library)
       elsif input.kind_of? Array
         interpretList input, context
       elsif input[:type] == :identifier
@@ -62,11 +60,8 @@ module RISP
         @special[input[0][:value]].call input, context
       else
         list = input.map { |x| interpret x, context }
-        if list[0].kind_of? Proc
-          list[0].call( *list[1..-1] )
-        else
-          list
-        end
+        return list[0].call( *list[1..-1] ) if list[0].kind_of? Proc
+        list
       end
     end
 
