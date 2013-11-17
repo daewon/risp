@@ -10,8 +10,7 @@ module RISP
       puts x.inspect
       x
     },
-    '+' => -> a, b { a + b },
-    '*' => -> a, b { a * b },
+    '+' => -> *args { args.reduce(0) { |acc, n| acc + n } },
     'list' => -> *args { args },
   }
 

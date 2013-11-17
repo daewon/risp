@@ -25,24 +25,10 @@ describe RISP do
     parens = parser.send :parenthesize, tokens
     RISP::interpret(parens, nil).should eql "daewon"
 
+    str = '(+ 1 2 3 4 5)'
+    tokens = parser.send :tokenize, str
+    parens = parser.send :parenthesize, tokens
+    RISP::interpret(parens, nil).should eql 15
 
   end
 end
-
-# it('should return correct result for lambda that takes and returns arg', function() {
-#       expect(t.interpret(t.parse("((lambda (x) x) 1)"))).toEqual(1);
-#   });
-
-# it('should return correct result for lambda that returns list of vars', function() {
-#       expect(t.interpret(t.parse("((lambda (x y) (x y)) 1 2)"))).toEqual([1, 2]);
-#   });
-
-# it('should get correct result for lambda that returns list of lits + vars', function() {
-#       expect(t.interpret(t.parse("((lambda (x y) (0 x y)) 1 2)"))).toEqual([0, 1, 2]);
-#   });
-
-# it('should return correct result when invoke lambda w params', function() {
-#       expect(t.interpret(t.parse("((lambda (x) (first (x))) 1)")))
-#       .toEqual(1);
-#   });
-#                    });
