@@ -63,7 +63,7 @@ module RISP
       else
         list = input.map { |x| interpret x, context }
         if list[0].kind_of? Proc
-          list[0].call *list[1..-1]
+          list[0].call( *list[1..-1] )
         else
           list
         end
