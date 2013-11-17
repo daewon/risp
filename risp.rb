@@ -86,7 +86,7 @@ module RISP
 
       if is_digit.call input
         {type: :literal, value: input.to_i}
-      elsif input[0] == '"' then
+      elsif input[0] == '"' and input[-1] == '"'then
         {type: :literal, value: input[1...-1]}
       else
         {type: :identifier, value: input}
