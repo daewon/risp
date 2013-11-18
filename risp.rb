@@ -3,7 +3,7 @@
 module RISP
   class Interpreter
     class Context
-      def initialize scope, parent = nil
+      def initialize scope = {}, parent = nil
         @scope, @parent = scope, parent
       end
 
@@ -20,12 +20,10 @@ module RISP
       @library = {
         'first' => -> x { x[0] },
         'rest' => -> x { x[1..-1] },
-        'print' => -> x {
-          puts x.inspect
-          x
-        },
+        'print' => -> x { puts "inspect: #{x.inspect}"; x },
         '+' => -> *args { args.reduce(0) { |acc, n| acc + n } },
-        'list' => -> *args { args },
+        '*' => -> *args { args.reduce(1) { |acc, n| acc * n } },
+        'list' => -> *args { args }
       }
 
       # spectial forms
@@ -36,10 +34,13 @@ module RISP
               acc.merge( { x[:value] => lambdaArguments[i] } )
             }
 
-            (interpret input[2..-1], Context.new(scope, context)).last
+            interpret input[2], Context.new(scope, context)
           }
         },
-        'define' => -> input { }
+        'let' => -> input, context {
+          scope = {input[1][0][:value] => input[1][1][:value]}
+          interpret input[2], Context.new(scope, context)
+        }
       }
     end
 
@@ -61,8 +62,7 @@ module RISP
         @special[head[:value]].call input, context
       else
         list = input.map { |x| interpret x, context }
-        return list.first.call( *list[1..-1] ) if list.first.kind_of? Proc
-        list
+        list.first.call( *list[1..-1] )
       end
     end
 

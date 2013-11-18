@@ -18,20 +18,40 @@ describe RISP do
   end
 
   it "interpret" do
-    parens = parser.parse '((lambda (x) x) "Lisp")'
-    interpreter.interpret(parens).should eql "Lisp"
-
-    parens = parser.parse '((first (list (lambda (x) x) "Lisp")) "daewon")'
-    interpreter.interpret(parens).should eql "daewon"
-
-    str = '(+ 1 2 3 4 5)'
-    parens = parser.parse str
-    interpreter.interpret(parens).should eql 15
-
     parens = parser.parse '"daewon"'
     interpreter.interpret(parens).should eql "daewon"
 
-    parens = parser.parse '((lambda (x) (print 10) (+ x 2) ) 10)'
-    interpreter.interpret(parens).should eql 12
+    parens = parser.parse '1'
+    interpreter.interpret(parens).should eql 1
+
+    parens = parser.parse '(+ 1 2)'
+    interpreter.interpret(parens).should eql 3
+
+    parens = parser.parse '(list 1 2)'
+    interpreter.interpret(parens).should eql [1, 2]
+
+    parens = parser.parse '(lambda (x) x)'
+    interpreter.interpret(parens).should be_a_kind_of Proc
+
+    parens = parser.parse '((lambda (x) x) 100)'
+    interpreter.interpret(parens).should eql 100
+
+    parens = parser.parse '(list (lambda (x) x) 100)'
+    interpreter.interpret(parens).length.should eql 2
+    interpreter.interpret(parens).first.should be_a_kind_of Proc
+    interpreter.interpret(parens).last.should eql 100
+
+    parens = parser.parse '((lambda (a) ((lambda (b) a) a)) 100)'
+    interpreter.interpret(parens).should eql 100
+
+    parens = parser.parse '(((lambda (a) (lambda (b) a)) 100))'
+    interpreter.interpret(parens).should eql 100
+
+    parens = parser.parse '(let (x 10) (* x x))'
+    interpreter.interpret(parens).should eql 100
+
+
+
+
   end
 end
