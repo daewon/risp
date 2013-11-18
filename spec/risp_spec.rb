@@ -21,6 +21,12 @@ describe RISP do
     parens = parser.parse '"daewon"'
     interpreter.interpret(parens).should eql "daewon"
 
+    parens = parser.parse '#t'
+    interpreter.interpret(parens).should eql true
+
+    parens = parser.parse '#f'
+    interpreter.interpret(parens).should eql false
+
     parens = parser.parse '1'
     interpreter.interpret(parens).should eql 1
 
@@ -50,8 +56,17 @@ describe RISP do
     parens = parser.parse '(let (x 10) (* x x))'
     interpreter.interpret(parens).should eql 100
 
+    parens = parser.parse '(let (x 10 y 100) (* x y))'
+    interpreter.interpret(parens).should eql 1000
 
+    parens = parser.parse '(if #t 10 20)'
+    interpreter.interpret(parens).should eql 10
 
+    parens = parser.parse '(if #f 10 20)'
+    interpreter.interpret(parens).should eql 20
+
+    parens = parser.parse '(if #f (print 100) 20)'
+    interpreter.interpret(parens).should eql 20
 
   end
 end

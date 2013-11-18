@@ -33,13 +33,21 @@ module RISP
             scope = input[1].each_with_index.reduce({}) { |acc, (x, i)|
               acc.merge( { x[:value] => lambdaArguments[i] } )
             }
-
             interpret input[2], Context.new(scope, context)
           }
         },
         'let' => -> input, context {
-          scope = {input[1][0][:value] => input[1][1][:value]}
+          scope = input[1].each_slice(2).reduce({}) { |acc, (a, b)|
+            acc.merge( {a[:value] => b[:value]} )
+          }
           interpret input[2], Context.new(scope, context)
+        },
+        'if' => -> input, context {
+          if interpret input[1]
+            interpret input[2], context
+          else
+            interpret input[3], context
+          end
         }
       }
     end
@@ -84,6 +92,10 @@ module RISP
         {type: :literal, value: input.to_i}
       elsif input[0] == '"' and input[-1] == '"'then
         {type: :literal, value: input[1...-1]}
+      elsif input == '#t' then
+        {type: :literal, value: true}
+      elsif input == '#f' then
+        {type: :literal, value: false}
       else
         {type: :identifier, value: input}
       end
