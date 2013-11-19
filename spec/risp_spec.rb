@@ -68,5 +68,7 @@ describe RISP do
     parens = parser.parse '(if #f (print 100) 20)'
     interpreter.interpret(parens).should eql 20
 
+    parens = parser.parse '(let (f (lambda (a) a) x 100) (f x))'
+    interpreter.interpret(parens).should eql 100
   end
 end

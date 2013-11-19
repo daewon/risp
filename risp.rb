@@ -38,7 +38,11 @@ module RISP
         },
         'let' => -> input, context {
           scope = input[1].each_slice(2).reduce({}) { |acc, (a, b)|
-            acc.merge( {a[:value] => b[:value]} )
+            if b.kind_of? Array
+              acc.merge({a[:value] => (interpret b, context)})
+            else
+              acc.merge({a[:value] => b[:value]})
+            end
           }
           interpret input[2], Context.new(scope, context)
         },
