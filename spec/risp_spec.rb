@@ -33,6 +33,15 @@ describe RISP do
     parens = parser.parse '(+ 1 2)'
     interpreter.interpret(parens).should eql 3
 
+    parens = parser.parse '(- 2 1)'
+    interpreter.interpret(parens).should eql 1
+
+    parens = parser.parse '(/ 10 2 2)'
+    interpreter.interpret(parens).should eql 2
+
+    parens = parser.parse '(* 10 10)'
+    interpreter.interpret(parens).should eql 100
+
     parens = parser.parse '(list 1 2)'
     interpreter.interpret(parens).should eql [1, 2]
 
@@ -82,5 +91,11 @@ describe RISP do
 
     parens = parser.parse '(progn (define f (lambda (x) (* x x))) (f 10))'
     interpreter.interpret(parens).should eql 100
+
+    parens = parser.parse '(hd (list 1 2 3 4))'
+    interpreter.interpret(parens).should eql 1
+
+    parens = parser.parse '(tail (list 1 2 3 4))'
+    interpreter.interpret(parens).should eql [2, 3, 4]
   end
 end

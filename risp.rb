@@ -22,11 +22,13 @@ module RISP
 
     def initialize
       @library = {
-        'first' => -> x { x[0] },
-        'rest' => -> x { x[1..-1] },
+        'hd' => -> x { x[0] },
+        'tail' => -> x { x[1..-1] },
         'print' => -> x { puts x; x },
         '+' => -> *args { args.reduce(0) { |acc, n| acc + n } },
+        '-' => -> *args { args[1..-1].reduce(args[0]) { |acc, n| acc - n } },
         '*' => -> *args { args.reduce(1) { |acc, n| acc * n } },
+        '/' => -> *args { args[1..-1].reduce(args[0]) { |acc, n| acc / n } },
         'list' => -> *args { args }
       }
 
