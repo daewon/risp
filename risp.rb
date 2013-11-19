@@ -7,6 +7,10 @@ module RISP
         @scope, @parent = scope, parent
       end
 
+      def set identifier, value
+        @scope[identifier] = value
+      end
+
       def get identifier
         if @scope[identifier]
           @scope[identifier]
@@ -20,7 +24,7 @@ module RISP
       @library = {
         'first' => -> x { x[0] },
         'rest' => -> x { x[1..-1] },
-        'print' => -> x { puts "inspect: #{x.inspect}"; x },
+        'print' => -> x { puts x; x },
         '+' => -> *args { args.reduce(0) { |acc, n| acc + n } },
         '*' => -> *args { args.reduce(1) { |acc, n| acc * n } },
         'list' => -> *args { args }
@@ -52,6 +56,12 @@ module RISP
           else
             interpret input[3], context
           end
+        },
+        'progn' => -> input, context {
+          input[1..-1].map { |e| interpret e, context }.last
+        },
+        'define' => -> input, context {
+          context.set input[1][:value], (interpret input[2])
         }
       }
     end

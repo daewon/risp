@@ -70,5 +70,17 @@ describe RISP do
 
     parens = parser.parse '(let (f (lambda (a) a) x 100) (f x))'
     interpreter.interpret(parens).should eql 100
+
+    parens = parser.parse '(progn (print 1) (print "progn"))'
+    interpreter.interpret(parens).should eql "progn"
+
+    parens = parser.parse '((lambda (x) (progn (* x x) (+ x x))) 10)'
+    interpreter.interpret(parens).should eql 20
+
+    parens = parser.parse '(progn (define x 100) (print x))'
+    interpreter.interpret(parens).should eql 100
+
+    parens = parser.parse '(progn (define f (lambda (x) (* x x))) (f 10))'
+    interpreter.interpret(parens).should eql 100
   end
 end
