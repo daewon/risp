@@ -97,5 +97,8 @@ describe RISP do
 
     parens = parser.parse '(tail (list 1 2 3 4))'
     interpreter.interpret(parens).should eql [2, 3, 4]
+
+    parens = parser.parse '(progn (define a 10) (define b 20) (define f (lambda (a, b) (+ a b) )) (f a b))'
+    interpreter.interpret(parens).should eql 30
   end
 end
