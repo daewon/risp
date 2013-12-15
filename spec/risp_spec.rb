@@ -2,6 +2,7 @@ require './risp'
 
 describe RISP do
   let(:parser) { RISP::Parser.new }
+  let(:lparser) { RISP::LispParser.new }
   let(:interpreter) { RISP::Interpreter.new }
   before :each do;end
 
@@ -14,7 +15,10 @@ describe RISP do
     tokens = %w{ ( ( lambda ( x ) x ) "Lisp" ) }
     expect = [[{ type: :identifier, value: 'lambda' },[{ type: :identifier, value: 'x' }], { type: :identifier, value: 'x' }],
               { type: :literal, value: 'Lisp' }]
-    parser.parenthesize(tokens).should eql expect
+    # parser.parenthesize(tokens).should eql expect
+    str = '( ( lambda ( x ) x ) "Lisp" )'
+    str = '((lambda (x) x) "Lisp")'
+    p lparser.parse str
   end
 
   it "interpret" do
